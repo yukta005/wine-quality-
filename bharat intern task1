@@ -1,0 +1,51 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
+from sklearn.datasets import load_wine
+
+# Load the wine quality dataset
+wine_data = load_wine()
+
+# Create a DataFrame from the dataset
+wine_df = pd.DataFrame(data=np.c_[wine_data['data'], wine_data['target']], columns=wine_data['feature_names'] + ['target'])
+
+# Select features and target variable
+features = ['alcohol']
+target = 'target'
+
+# Split the data into features (X) and target variable (y)
+X = wine_df[features]
+y = wine_df[target]
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create a linear regression model
+model = LinearRegression()
+
+# Train the model
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mae = metrics.mean_absolute_error(y_test, y_pred)
+mse = metrics.mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+
+# Print the evaluation metrics
+print(f'Mean Absolute Error: {mae}')
+print(f'Mean Squared Error: {mse}')
+print(f'Root Mean Squared Error: {rmse}')
+
+# Plot the regression line
+plt.scatter(X_test, y_test, color='black')
+plt.plot(X_test, y_pred, color='blue', linewidth=3)
+plt.xlabel(features[0])  # Adjust the label based on selected features
+plt.ylabel(target)
+plt.title('Linear Regression: Wine Quality Prediction')
+plt.show()
